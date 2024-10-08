@@ -4,13 +4,9 @@
     <!--Navbar-->
     <Navbar />
     <!--end Navbar-->
-
-    <!-- Menu Section -->
-    <Category />
-    <!-- End Menu Section-->
-
+    
     <!-- Content Section -->
-    <ListFoods />
+    <RouterView />
     <!-- End Content-->
 
     <!-- Footer Section -->
@@ -24,4 +20,5 @@ import Navbar from "./components/Navbar.vue";
 import Category from "./components/Category.vue";
 import Footer from "./components/Footer.vue";
 import ListFoods from "./pages/ListFoods.vue";
+import { RouterView } from "vue-router";
 </script>
