@@ -10,7 +10,7 @@
 import Category from '../components/Category.vue';
 import ListFoods from './ListFoods.vue';
 
-import { onMounted, ref } from "vue";
+import { onMounted, ref, inject, watch } from "vue";
 import axios from "axios";
 
 const foods = ref([]);
@@ -28,5 +28,14 @@ const isFilter = async (id) => {
     .then((resp) => foods.value = resp.data.data.data)
     .catch((err) => console.log(err));
 }
+
+const navbarData = inject('navbarSearch');
+
+watch(navbarData, async (value) => {
+    await axios
+    .get('v1/foods?search='+value)
+    .then((resp) => foods.value = resp.data.data.data)
+    .catch((err) => console.log(err));
+})
 
 </script>

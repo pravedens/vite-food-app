@@ -53,7 +53,6 @@ const categories = ref([]);
 const isActive = ref(null);
 
 onMounted(() => {
-  isActive.value = null;
   axios
     .get("v1/categories")
     .then((resp) => (categories.value = resp.data.data.data))

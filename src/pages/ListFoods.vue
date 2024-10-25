@@ -76,7 +76,7 @@
 import { ref } from 'vue';
 
 defineProps({
-  dataFood: Array,
+  dataFood: Object,
 });
 
 const isVisible = ref(false);
@@ -97,6 +97,7 @@ const formatMoney = (money) => {
     currency: "RUB"
   }).format(money);
 }
+
 </script>
 
 <style scoped>
