@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Category />
+        <Category @filterFood="isFilter" />
 
         <ListFoods :dataFood="foods" />
     </div>
@@ -15,11 +15,18 @@ import axios from "axios";
 
 const foods = ref([]);
 
-onMounted(() => {
-  axios
+onMounted( async () => {
+  await axios
     .get('v1/foods')
     .then((resp) => foods.value = resp.data.data.data)
     .catch((err) => console.log(err));
-})
+});
+
+const isFilter = async (id) => {
+    await axios
+    .get('v1/foods?category='+id)
+    .then((resp) => foods.value = resp.data.data.data)
+    .catch((err) => console.log(err));
+}
 
 </script>
