@@ -6,6 +6,7 @@
           <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
             <!-- Mobile menu button-->
             <button
+              @click="toggleMobileMenu"
               id="mobile-menu-button"
               ref="mobileMenuButton"
               type="button"
@@ -69,7 +70,8 @@
                   >Contact</RouterLink
                 >
                 <div>
-                  <input v-model="search"
+                  <input
+                    v-model="search"
                     type="text"
                     class="p-1 mt-1 bg-blue-300 border-2 border-gray-300 rounded-lg placeholder-slate-600"
                     placeholder="Search Menu"
@@ -83,6 +85,7 @@
           >
             <div class="relative dropdown">
               <button
+                @click="toggleDropdown"
                 type="button"
                 class="flex text-sm bg-white rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
                 id="user-menu-button"
@@ -99,7 +102,9 @@
               </button>
               <!-- Dropdown menu -->
               <div
-                class="absolute right-0 hidden w-48 py-1 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dropdown-content"
+                v-show="userDropdown"
+                @click.stop
+                class="absolute right-0 w-48 py-1 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dropdown-content"
                 role="menu"
                 aria-orientation="vertical"
                 ref="dropdownContent"
@@ -119,17 +124,16 @@
       </div>
 
       <!-- Mobile menu, show/hide based on menu state. -->
-      <div class="hidden sm:hidden" ref="mobileMenu" id="mobile-menu">
+      <div v-show="isMobileMenuVisible" ref="mobileMenu" id="mobile-menu">
         <div class="px-2 pt-2 pb-3 space-y-1">
-          <a
-            href="#"
+          <RouterLink
+            to="/"
             class="block px-3 py-2 text-base font-medium text-gray-900 rounded-md hover:bg-gray-200"
-            >Home</a
+            >Home</RouterLink
           >
-          <a
-            href="#"
+          <RouterLink to="/contact"
             class="block px-3 py-2 text-base font-medium text-gray-900 rounded-md hover:bg-gray-200"
-            >Contact</a
+            >Contact</RouterLink
           >
         </div>
       </div>
@@ -138,16 +142,42 @@
 </template>
 
 <script setup>
-import { watch, ref, defineEmits } from 'vue';
+import { watch, ref, defineEmits, onUnmounted, onMounted } from "vue";
+import { RouterLink } from "vue-router";
 
-const search = ref('');
+const search = ref("");
 
-const emit = defineEmits(['search']);
+const userDropdown = ref(false);
+
+const isMobileMenuVisible = ref(false);
+
+const emit = defineEmits(["search"]);
 
 watch(search, (value) => {
-    if(value.length >= 3)
-        emit('search', value)
-    if(value.length < 1)
-        emit('search', value)
-})
+  if (value.length >= 3) emit("search", value);
+  if (value.length < 1) emit("search", value);
+});
+
+const toggleMobileMenu = (event) => {
+  event.stopPropagation();
+  isMobileMenuVisible.value = !isMobileMenuVisible.value;
+};
+
+const toggleDropdown = (event) => {
+  event.stopPropagation();
+  userDropdown.value = !userDropdown.value;
+};
+
+const handleClickDropdown = () => {
+  if (userDropdown.value) userDropdown.value = false;
+  if (isMobileMenuVisible.value) isMobileMenuVisible.value = false;
+};
+
+onMounted(() => {
+  document.addEventListener("click", handleClickDropdown);
+});
+
+onUnmounted(() => {
+  document.removeEventListener("click", handleClickDropdown);
+});
 </script>
