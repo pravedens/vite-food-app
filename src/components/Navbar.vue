@@ -84,7 +84,8 @@
             class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0"
           >
             <div class="relative dropdown">
-              <button
+              <div class="flex gap-2">
+                <button
                 @click="toggleDropdown"
                 type="button"
                 class="flex text-sm bg-white rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
@@ -100,6 +101,11 @@
                   alt=""
                 />
               </button>
+              <div class="mt-1">
+                {{ authStore.user }}
+              </div>
+              </div>
+              
               <!-- Dropdown menu -->
               <div
                 v-show="userDropdown"
@@ -131,7 +137,8 @@
             class="block px-3 py-2 text-base font-medium text-gray-900 rounded-md hover:bg-gray-200"
             >Home</RouterLink
           >
-          <RouterLink to="/contact"
+          <RouterLink
+            to="/contact"
             class="block px-3 py-2 text-base font-medium text-gray-900 rounded-md hover:bg-gray-200"
             >Contact</RouterLink
           >
@@ -144,6 +151,9 @@
 <script setup>
 import { watch, ref, defineEmits, onUnmounted, onMounted } from "vue";
 import { RouterLink } from "vue-router";
+import { userAuthStore } from "../stores/authStore";
+
+const authStore = userAuthStore();
 
 const search = ref("");
 
