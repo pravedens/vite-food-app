@@ -84,45 +84,70 @@
             class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0"
           >
             <div class="relative dropdown">
-              <div class="flex gap-2">
-                <button
-                @click="toggleDropdown"
-                type="button"
-                class="flex text-sm bg-white rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
-                id="user-menu-button"
-                ref="userMenuButton"
-                aria-expanded="false"
-                aria-haspopup="true"
-              >
-                <span class="sr-only">Open user menu</span>
-                <img
-                  class="w-8 h-8 rounded-full"
-                  src="https://via.placeholder.com/150"
-                  alt=""
-                />
-              </button>
-              <div class="mt-1">
-                {{ authStore.user }}
-              </div>
-              </div>
-              
-              <!-- Dropdown menu -->
-              <div
-                v-show="userDropdown"
-                @click.stop
-                class="absolute right-0 w-48 py-1 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dropdown-content"
-                role="menu"
-                aria-orientation="vertical"
-                ref="dropdownContent"
-                aria-labelledby="user-menu-button"
-                tabindex="-1"
-              >
-                <a
-                  href="#"
-                  class="block px-4 py-2 text-sm text-gray-700"
-                  role="menuitem"
-                  >Logout</a
+              <div v-if="authStore.isLoggin">
+                <div class="flex gap-2">
+                  <button
+                    @click="toggleDropdown"
+                    type="button"
+                    class="flex text-sm bg-white rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
+                    id="user-menu-button"
+                    ref="userMenuButton"
+                    aria-expanded="false"
+                    aria-haspopup="true"
+                  >
+                    <span class="sr-only">Open user menu</span>
+                    <img
+                      class="w-8 h-8 rounded-full"
+                      src="https://via.placeholder.com/150"
+                      alt=""
+                    />
+                  </button>
+                  <div class="mt-1">
+                    {{ authStore.user.name }}
+                  </div>
+                </div>
+                <!-- Dropdown menu -->
+                <div
+                  v-show="userDropdown"
+                  @click.stop
+                  class="absolute right-0 w-48 py-1 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dropdown-content"
+                  role="menu"
+                  aria-orientation="vertical"
+                  ref="dropdownContent"
+                  aria-labelledby="user-menu-button"
+                  tabindex="-1"
                 >
+                <div
+                @click="handleLogout"
+                class="block px-4 py-2 text-sm text-gray-700 pointer-events-auto hover:bg-gray-300"
+                role="menuitem"
+              >
+                Logout
+              </div>
+              </div>
+
+              </div>
+              <div v-else>
+                <RouterLink to="login">
+                  <div class="flex gap-2">
+                    <button
+                      type="button"
+                      class="flex text-sm bg-white rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
+                      id="user-menu-button"
+                      ref="userMenuButton"
+                      aria-expanded="false"
+                      aria-haspopup="true"
+                    >
+                      <span class="sr-only">Open user menu</span>
+                      <img
+                        class="w-8 h-8 rounded-full"
+                        src="https://via.placeholder.com/150"
+                        alt=""
+                      />
+                    </button>
+                    <div class="mt-1">Sign in</div>
+                  </div>
+                </RouterLink>
               </div>
             </div>
           </div>
@@ -152,10 +177,14 @@
 import { watch, ref, defineEmits, onUnmounted, onMounted } from "vue";
 import { RouterLink } from "vue-router";
 import { userAuthStore } from "../stores/authStore";
+import { useRouter } from "vue-router";
+import axios from "axios";
 
 const authStore = userAuthStore();
 
 const search = ref("");
+
+const router = useRouter();
 
 const userDropdown = ref(false);
 
@@ -184,10 +213,21 @@ const handleClickDropdown = () => {
 };
 
 onMounted(() => {
+  authStore.getUser();
   document.addEventListener("click", handleClickDropdown);
 });
 
 onUnmounted(() => {
   document.removeEventListener("click", handleClickDropdown);
 });
+
+const handleLogout = () => {
+  axios
+    .post("v1/logout", null)
+    .then((resp) => {
+      authStore.clearToken();
+      router.push("/");
+    })
+    .catch((err) => console.log(err));
+};
 </script>

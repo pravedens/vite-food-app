@@ -15,6 +15,18 @@ const routes = [
     name: "Contact",
     component: Contact,
   },
+
+  {
+    path: "/login",
+    name: "Login",
+    component: () => import('../pages/Auth/Login.vue')
+  },
+
+  {
+    path: "/register",
+    name: "Register",
+    component: () => import('../pages/Auth/Register.vue')
+  },
 ];
 
 const router = createRouter({
